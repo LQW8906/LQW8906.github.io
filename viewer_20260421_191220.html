@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>证书信息查询</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center; }
+        .header h1 { color: white; font-size: 24px; font-weight: 600; }
+        .content { padding: 24px 20px; }
+        .info-row { display: flex; padding: 14px 0; border-bottom: 1px solid #eee; }
+        .info-row:last-child { border-bottom: none; }
+        .label { width: 110px; font-weight: 600; color: #333; font-size: 15px; }
+        .value { flex: 1; color: #555; font-size: 15px; word-break: break-all; }
+        .footer { background: #f8f9fa; padding: 16px; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee; }
+        .error { text-align: center; padding: 60px 20px; color: #999; }
+        .error i { font-size: 48px; margin-bottom: 16px; display: inline-block; }
+        .loading { text-align: center; padding: 60px 20px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="card" id="app">
+        <div class="header"><h1>证书信息查询</h1></div>
+        <div class="content" id="content"><div class="loading">加载中...</div></div>
+        <div class="footer">本证书信息真实有效，扫码验证</div>
+    </div>
+    <script>
+        const certificatesData = {"1": {
+    "姓名": "张三",
+    "身份证号码": "410482198605161712",
+    "操作项目": "高压电工作业",
+    "证书编号": "T410482198605161712",
+    "证书有效期": "2026-04-17至2032-04-16",
+    "换证日期": "2032-04-16",
+    "培训机构": "汝州安培中心",
+    "发证机关": "河南省应急管理厅"  },
+"2": {
+    "姓名": "李四",
+    "身份证号码": "410482198605161713",
+    "操作项目": "高处作业",
+    "证书编号": "T410482198605161713",
+    "证书有效期": "2026-04-17至2032-04-17",
+    "换证日期": "2032-04-17",
+    "培训机构": "汝州市安全生产技术培训中心",
+    "发证机关": "河南省应急管理厅"  },
+"3": {
+    "姓名": "王武",
+    "身份证号码": "410482198605161714",
+    "操作项目": "焊工作业",
+    "证书编号": "T410482198605161714",
+    "证书有效期": "2026-04-17至2032-04-18",
+    "换证日期": "2032-04-18",
+    "培训机构": "汝州市安全生产技术培训中心",
+    "发证机关": "河南省应急管理厅"  }
+};
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function renderInfo(data) {
+            if (!data) {
+                document.getElementById('content').innerHTML = `<div class="error"><div style="font-size:48px; margin-bottom:16px;">??</div><div>未找到对应的证书信息</div><div style="font-size:13px; margin-top:12px;">请确认二维码是否正确</div></div>`;
+                return;
+            }
+            const fields = [
+                { label: "姓名", key: "姓名" },
+                { label: "身份证号码", key: "身份证号码" },
+                { label: "操作项目", key: "操作项目" },
+                { label: "证书编号", key: "证书编号" },
+                { label: "证书有效期", key: "证书有效期" },
+                { label: "换证日期", key: "换证日期" },
+                { label: "培训机构", key: "培训机构" },
+                { label: "发证机关", key: "发证机关" }
+            ];
+            let htmlStr = '';
+            for (let field of fields) {
+                if (data[field.key]) {
+                    htmlStr += `<div class="info-row"><div class="label">${field.label}</div><div class="value">${escapeHtml(data[field.key])}</div></div>`;
+                }
+            }
+            document.getElementById('content').innerHTML = htmlStr;
+        }
+        const id = getQueryParam('id');
+        if (id && certificatesData[id]) {
+            renderInfo(certificatesData[id]);
+        } else {
+            renderInfo(null);
+        }
+    </script>
+</body>
+</html>
